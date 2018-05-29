@@ -35,6 +35,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_city_search);
         etCityInput = findViewById(R.id.etCityInput);
         btnOkSearchCity = findViewById(R.id.btnOkSearchCity);
