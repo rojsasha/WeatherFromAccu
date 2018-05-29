@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">WeatherFromAccu</string>
+    <string name="api_key">HTP87U591nzAGguNLhf7BbVKFKujLeIb</string>
+    <string name="api_key1">9pKXrwEg62mYPGVMN02WYF57jITIl6V9</string>
+    <string name="api_key2">w0sYj3BvDemsqyDI7QMv0LBoUljLRY2p</string>
+    <string name="todo">TODO</string>
+
+</resources>
