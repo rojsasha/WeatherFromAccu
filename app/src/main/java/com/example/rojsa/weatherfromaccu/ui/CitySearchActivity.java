@@ -41,6 +41,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_city_search);
 
         etCityInput = findViewById(R.id.etCityInput);
+
         btnOkSearchCity = findViewById(R.id.btnOkSearchCity);
         listViewCity = findViewById(R.id.listViewCity);
         service = WeatherApplication.get(this).getService();
