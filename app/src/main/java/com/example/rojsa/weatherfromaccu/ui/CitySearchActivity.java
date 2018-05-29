@@ -32,6 +32,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     private WeatherInterface service;
     private List<CitySeachModel> saveList;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
