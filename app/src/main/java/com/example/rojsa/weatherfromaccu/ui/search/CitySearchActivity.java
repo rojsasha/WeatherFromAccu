@@ -49,6 +49,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         listViewCity.setOnItemClickListener(this);
     }
 
+
     @Override
     public void onClick(View view) {
         mPresenter.getCityList(etCityInput.getText().toString());
