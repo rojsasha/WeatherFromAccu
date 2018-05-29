@@ -30,6 +30,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     private Button btnOkSearchCity;
     private ListView listViewCity;
     private WeatherInterface service;
+
     private List<CitySeachModel> saveList;
 
 
@@ -38,6 +39,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_city_search);
+
         etCityInput = findViewById(R.id.etCityInput);
         btnOkSearchCity = findViewById(R.id.btnOkSearchCity);
         listViewCity = findViewById(R.id.listViewCity);
