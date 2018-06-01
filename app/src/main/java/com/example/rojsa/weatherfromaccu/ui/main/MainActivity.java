@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rojsa.weatherfromaccu.R;;
-import com.example.rojsa.weatherfromaccu.data.WeatherApplication;
+import com.example.rojsa.weatherfromaccu.WeatherApplication;
 import com.example.rojsa.weatherfromaccu.data.WeatherInterface;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel;
 import com.example.rojsa.weatherfromaccu.ui.search.CitySearchActivity;

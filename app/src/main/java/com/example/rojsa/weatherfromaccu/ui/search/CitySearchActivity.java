@@ -8,19 +8,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.StringResourses;
-import com.example.rojsa.weatherfromaccu.data.WeatherApplication;
-import com.example.rojsa.weatherfromaccu.data.WeatherInterface;
+import com.example.rojsa.weatherfromaccu.WeatherApplication;
 import com.example.rojsa.weatherfromaccu.models.city_search.CitySeachModel;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class CitySearchActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, CitySearchContract.View {
     private EditText etCityInput;
