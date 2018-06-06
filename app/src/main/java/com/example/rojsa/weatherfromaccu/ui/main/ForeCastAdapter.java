@@ -39,12 +39,8 @@ public class ForeCastAdapter extends ArrayAdapter {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
             holder = new ViewHolder(convertView);
-
-
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -52,13 +48,11 @@ public class ForeCastAdapter extends ArrayAdapter {
         DailyForecast model = (DailyForecast) getItem(position);
         assert model != null;
         String url;
-        if (model.getDay().getIcon()<10){
+        if (model.getDay().getIcon() < 10) {
             url = String.format(Constants.URL_IMAGE_ZERO, model.getDay().getIcon());
-        }
-        else {
+        } else {
             url = String.format(Constants.URL_IMAGE_ONE, model.getDay().getIcon());
         }
-
 
         Picasso.get().load(url).into(holder.imageView);
         holder.tvTemp.setText(model.getTemperature().getMaximum().getValue() + "/" + model.getTemperature().getMinimum().getValue());
@@ -68,7 +62,8 @@ public class ForeCastAdapter extends ArrayAdapter {
     class ViewHolder {
         TextView tvDate, tvTemp;
         ImageView imageView;
-        public ViewHolder(View view){
+
+        public ViewHolder(View view) {
             tvDate = view.findViewById(R.id.tvDate);
             imageView = view.findViewById(R.id.imgWeather);
             tvTemp = view.findViewById(R.id.tvTempDayNight);

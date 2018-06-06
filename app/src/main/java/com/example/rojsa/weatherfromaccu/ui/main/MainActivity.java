@@ -43,18 +43,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         btnSetCity.setOnClickListener(this);
     }
 
-    private void getSavedCity() {
-        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
-        if (preferences != null) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("id", mKeyCity);
-            editor.putString("city", mCity);
-            editor.apply();
-        } else {
-            mKeyCity = preferences.getString("id", "Выберите город");
-            mCity = preferences.getString("city", "Выберите город");
-        }
-    }
 
     @Override
     public void onClick(View view) {
@@ -77,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     protected void onStop() {
         super.onStop();
-        getSavedCity();
     }
 
     @Override

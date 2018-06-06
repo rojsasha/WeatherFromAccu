@@ -6,7 +6,7 @@ import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.StringResourses;
 import com.example.rojsa.weatherfromaccu.data.db.SaveCityModel;
 import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
-import com.example.rojsa.weatherfromaccu.models.city_search.CitySeachModel;
+import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 
 import java.util.List;
 
@@ -28,13 +28,13 @@ public class CitySearchPresenter implements CitySearchContract.Presenter {
 
     @Override
     public void getCityList(String city) {
-        Call<List<CitySeachModel>> cityModel = mService.getCitySearch(mGetString.getString(R.string.api_key2),
+        Call<List<CitySearchModel>> cityModel = mService.getCitySearch(mGetString.getString(R.string.api_key2),
                 city,
                 "ru-RU");
 
-        cityModel.enqueue(new Callback<List<CitySeachModel>>() {
+        cityModel.enqueue(new Callback<List<CitySearchModel>>() {
             @Override
-            public void onResponse(@NonNull Call<List<CitySeachModel>> call, Response<List<CitySeachModel>> response) {
+            public void onResponse(@NonNull Call<List<CitySearchModel>> call, Response<List<CitySearchModel>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     mView.onSuccess(response.body());
 
@@ -44,7 +44,7 @@ public class CitySearchPresenter implements CitySearchContract.Presenter {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<CitySeachModel>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<CitySearchModel>> call, @NonNull Throwable t) {
                 mView.onError(t.getLocalizedMessage());
             }
         });

@@ -27,7 +27,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void getWeatherCurrent(String keyCity) {
-        if (keyCity!= null) {
+        if (keyCity== null) {
             mService.getCurrentWeather(keyCity, mGetString.getString(R.string.api_key1))
                     .enqueue(new Callback<List<CurrentModel>>() {
                         @Override

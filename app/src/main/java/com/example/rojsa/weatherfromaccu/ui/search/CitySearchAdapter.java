@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.rojsa.weatherfromaccu.R;
-import com.example.rojsa.weatherfromaccu.models.city_search.CitySeachModel;
+import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ import java.util.List;
  */
 
 public class CitySearchAdapter extends ArrayAdapter {
-    public CitySearchAdapter(@NonNull Context context, List<CitySeachModel> list) {
+    public CitySearchAdapter(@NonNull Context context, List<CitySearchModel> list) {
         super(context, 0,list);
         Context context1 = context;
-        List<CitySeachModel> list1 = list;
+        List<CitySearchModel> list1 = list;
     }
 
     @SuppressLint("SetTextI18n")
@@ -41,7 +41,7 @@ public class CitySearchAdapter extends ArrayAdapter {
         }else{
          holder = (ViewHolder) convertView.getTag();
         }
-        CitySeachModel model = (CitySeachModel) getItem(position);
+        CitySearchModel model = (CitySearchModel) getItem(position);
         assert model != null;
         holder.tvCityList.setText(model.getLocalizedName());
         holder.tvCityRegion.setText(model.getAdministrativeArea().getLocalizedName() + ", " + model.getCountry().getLocalizedName());

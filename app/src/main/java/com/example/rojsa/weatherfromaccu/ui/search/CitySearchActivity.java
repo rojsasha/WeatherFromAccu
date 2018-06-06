@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.StringResourses;
 import com.example.rojsa.weatherfromaccu.WeatherApplication;
-import com.example.rojsa.weatherfromaccu.models.city_search.CitySeachModel;
+import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     private ListView listViewCity;
     private CitySearchPresenter mPresenter;
 
-    private List<CitySeachModel> saveList;
+    private List<CitySearchModel> saveList;
 
 
     @Override
@@ -60,7 +60,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onSuccess(List<CitySeachModel> list) {
+    public void onSuccess(List<CitySearchModel> list) {
         listViewCity.setAdapter(new CitySearchAdapter(this, saveList = list));
     }
 
