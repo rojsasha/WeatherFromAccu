@@ -3,8 +3,8 @@ package com.example.rojsa.weatherfromaccu;
 import android.app.Application;
 import android.content.Context;
 
-import com.example.rojsa.weatherfromaccu.data.NetWorkBuilder;
-import com.example.rojsa.weatherfromaccu.data.WeatherInterface;
+import com.example.rojsa.weatherfromaccu.data.internet.NetWorkBuilder;
+import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
 
 /**
  * Created by rojsa on 07.04.2018.

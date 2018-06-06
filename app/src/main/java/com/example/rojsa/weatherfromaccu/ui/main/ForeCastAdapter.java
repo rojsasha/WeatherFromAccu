@@ -23,8 +23,8 @@ import java.util.List;
  */
 
 public class ForeCastAdapter extends ArrayAdapter {
-    List<DailyForecast> list;
-    Context context;
+    private List<DailyForecast> list;
+    private Context context;
 
     public ForeCastAdapter(@NonNull Context context, List<DailyForecast> list) {
         super(context, 0, list);
@@ -39,11 +39,11 @@ public class ForeCastAdapter extends ArrayAdapter {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            holder = new ViewHolder();
+
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
-            holder.tvDate = convertView.findViewById(R.id.tvDate);
-            holder.imageView = convertView.findViewById(R.id.imgWeather);
-            holder.tvTemp = convertView.findViewById(R.id.tvTempDayNight);
+            holder = new ViewHolder(convertView);
+
+
 
             convertView.setTag(holder);
         } else {
@@ -68,6 +68,11 @@ public class ForeCastAdapter extends ArrayAdapter {
     class ViewHolder {
         TextView tvDate, tvTemp;
         ImageView imageView;
+        public ViewHolder(View view){
+            tvDate = view.findViewById(R.id.tvDate);
+            imageView = view.findViewById(R.id.imgWeather);
+            tvTemp = view.findViewById(R.id.tvTempDayNight);
+        }
 
     }
 }

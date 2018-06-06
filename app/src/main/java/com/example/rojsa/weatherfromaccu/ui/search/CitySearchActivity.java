@@ -30,19 +30,18 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_city_search);
-
         etCityInput = findViewById(R.id.etCityInput);
-        mPresenter = new CitySearchPresenter(WeatherApplication.get(this).getService()
-                , new StringResourses(this), this);
-
         btnOkSearchCity = findViewById(R.id.btnOkSearchCity);
         listViewCity = findViewById(R.id.listViewCity);
+
+        mPresenter.bind(this);
+        mPresenter = new CitySearchPresenter(WeatherApplication.get(this).getService()
+                , new StringResourses(this));
 
         btnOkSearchCity.setOnClickListener(this);
 
         listViewCity.setOnItemClickListener(this);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -54,6 +53,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         Intent intent = new Intent();
         intent.putExtra("id", saveList.get(i).getKey());
         intent.putExtra("city", saveList.get(i).getLocalizedName());
+        mPresenter.saveCity(saveList.get(i).getKey(), saveList.get(i).getLocalizedName());
         setResult(RESULT_OK, intent);
         finish();
 
@@ -67,5 +67,11 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onError(String msg) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.unbind();
     }
 }

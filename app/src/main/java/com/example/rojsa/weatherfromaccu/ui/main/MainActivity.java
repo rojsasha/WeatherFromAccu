@@ -3,7 +3,6 @@ package com.example.rojsa.weatherfromaccu.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,30 +10,29 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.rojsa.weatherfromaccu.R;;
 import com.example.rojsa.weatherfromaccu.WeatherApplication;
-import com.example.rojsa.weatherfromaccu.data.WeatherInterface;
+import com.example.rojsa.weatherfromaccu.data.StringResourses;
+import com.example.rojsa.weatherfromaccu.models.CurrentModel;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel;
 import com.example.rojsa.weatherfromaccu.ui.search.CitySearchActivity;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends AppCompatActivity implements OnClickListener {
-    private WeatherInterface service;
+public class MainActivity extends AppCompatActivity implements OnClickListener, MainContract.View {
     private TextView tvTemperature, tvCity, tvDate;
     private String mKeyCity, mCity;
     private ListView listView;
-
+    private MainPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        service = WeatherApplication.get(this).getService();
+
+
+        mPresenter = new MainPresenter(WeatherApplication.get(this).getService(),
+                new StringResourses(this));
+        mPresenter.bind(this);
+
         tvTemperature = findViewById(R.id.tvTemperature);
         tvCity = findViewById(R.id.tvCity);
         tvDate = findViewById(R.id.tvDate);
@@ -43,10 +41,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         ImageButton btnSetCity = findViewById(R.id.btnSetCity);
 
         btnSetCity.setOnClickListener(this);
-//        getWeatherCurrent();
-//        getWeatherForecast();
-
-
     }
 
     private void getSavedCity() {
@@ -62,58 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
-    private void getWeatherForecast() {
-        if (mKeyCity == null) {
-            return;
-        }
-        Call<ForecastModel> json = service.getCityForecastFiveDays(mKeyCity, getString(R.string.api_key2), "ru-RU",
-                true, true);
-        json.enqueue(new Callback<ForecastModel>() {
-            @Override
-            public void onResponse(@NonNull Call<ForecastModel> call, @NonNull Response<ForecastModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(getApplicationContext(), "Successful", Toast.LENGTH_SHORT).show();
-                    ForecastModel model = response.body();
-                    tvTemperature.setText(String.valueOf(model.getDailyForecasts().get(0).getTemperature().getMaximum().getValue()));
-                    ForeCastAdapter adapter = new ForeCastAdapter(getApplicationContext(), model.getDailyForecasts());
-                    listView.setAdapter(adapter);
-
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ForecastModel> call, @NonNull Throwable t) {
-
-            }
-        });
-
-    }
-//    private void getWeatherCurrent() {
-//        if (keyCity == null){
-//            return;
-//        }
-//
-//        Call<List<CurrentModel>> currentModelCall = service.getCurrentWeather(keyCity, getString(R.string.api_key1));
-//        currentModelCall.enqueue(new Callback<List<CurrentModel>>() {
-//            @Override
-//            public void onResponse(@NonNull Call<List<CurrentModel>> call, @NonNull Response<List<CurrentModel>> response) {
-//                List<CurrentModel> list = response.body();
-//                CurrentModel model = list.get(0);
-//                tvTemperature.setText(String.valueOf(model.getTemperature().getMetric().getValue()));
-//                String url = String.format("https://developer.accuweather.com/sites/default/files/0%1s-s.png",model.getWeatherIcon());
-//                Picasso.get().load(url).into(imgWeather);
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<List<CurrentModel>> call, @NonNull Throwable t) {
-//                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(this, CitySearchActivity.class);
@@ -127,10 +69,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         mKeyCity = data.getStringExtra("id");
         mCity = data.getStringExtra("city");
         tvCity.setText(mCity);
-
-//        getWeatherCurrent();
-//        getWeatherForecast();
-
+        mPresenter.getWeatherCurrent(mKeyCity);
+        mPresenter.getWeatherForecast(mKeyCity);
 
     }
 
@@ -138,5 +78,27 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     protected void onStop() {
         super.onStop();
         getSavedCity();
+    }
+
+    @Override
+    public void onSuccessCurrentWeather(CurrentModel model) {
+        tvTemperature.setText(String.valueOf(model.getTemperature().getMetric().getValue()));
+    }
+
+    @Override
+    public void onSuccessForecastWeather(ForecastModel model) {
+        tvTemperature.setText(String.valueOf(model.getDailyForecasts().get(0).getTemperature().getMaximum().getValue()));
+        listView.setAdapter(new ForeCastAdapter(this, model.getDailyForecasts()));
+    }
+
+    @Override
+    public void onError(String msg) {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.unbind();
     }
 }
