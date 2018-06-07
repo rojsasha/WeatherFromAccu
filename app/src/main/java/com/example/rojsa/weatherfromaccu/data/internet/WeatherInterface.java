@@ -4,6 +4,7 @@ import com.example.rojsa.weatherfromaccu.data.Constants;
 import com.example.rojsa.weatherfromaccu.models.CurrentModel;
 import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel;
+import com.example.rojsa.weatherfromaccu.models.geo_pos_model.GeoPosModel;
 
 import java.util.List;
 
@@ -20,6 +21,12 @@ public interface WeatherInterface {
     @GET("currentconditions/v1/{name}")
     Call<List<CurrentModel>> getCurrentWeather(@Path("name") String name,
                                                @Query("apikey") String apiKey
+    );
+
+    @GET(Constants.URL_CITY_SEARCH_GEOPOSITION)
+    Call<GeoPosModel> getGeoKeyCity(@Query("apikey") String apiKey,
+                                          @Query("q") String q,
+                                          @Query("language") String lang
     );
 
 //    @Query("language") String lang

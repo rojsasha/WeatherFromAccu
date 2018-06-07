@@ -7,6 +7,7 @@ import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel
 public interface MainContract {
     interface View {
         void onSuccessCurrentWeather(CurrentModel model);
+        void onSuccessLocationCurrentWeather(CurrentModel model);
 
         void onSuccessForecastWeather(ForecastModel model);
 
@@ -18,6 +19,7 @@ public interface MainContract {
     interface Presenter extends LiveCicle<View> {
         void getWeatherCurrent(String keyCity);
         void getWeatherForecast(String keyCity);
+        void getLocationCurrentWeather(String location);
 
 
     }

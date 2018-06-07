@@ -4,5 +4,6 @@
     <string name="api_key1">9pKXrwEg62mYPGVMN02WYF57jITIl6V9</string>
     <string name="api_key2">w0sYj3BvDemsqyDI7QMv0LBoUljLRY2p</string>
     <string name="todo">TODO</string>
+    <string name="text_progressbar">Download Weather</string>
 
 </resources>

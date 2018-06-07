@@ -3,7 +3,7 @@ package com.example.rojsa.weatherfromaccu.ui.search;
 import android.support.annotation.NonNull;
 
 import com.example.rojsa.weatherfromaccu.R;
-import com.example.rojsa.weatherfromaccu.data.StringResourses;
+import com.example.rojsa.weatherfromaccu.data.StringResources;
 import com.example.rojsa.weatherfromaccu.data.db.SaveCityModel;
 import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
 import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
@@ -17,10 +17,11 @@ import retrofit2.Response;
 
 public class CitySearchPresenter implements CitySearchContract.Presenter {
     private WeatherInterface mService;
-    private StringResourses mGetString;
+    private StringResources mGetString;
     private CitySearchContract.View mView;
 
-    public CitySearchPresenter(WeatherInterface service, StringResourses getString) {
+
+    public CitySearchPresenter(WeatherInterface service, StringResources getString) {
         mService = service;
         mGetString = getString;
     }

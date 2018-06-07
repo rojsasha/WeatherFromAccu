@@ -2,10 +2,10 @@ package com.example.rojsa.weatherfromaccu.data;
 
 import android.content.Context;
 
-public class StringResourses {
+public class StringResources {
     private Context mContext;
 
-    public StringResourses(Context context) {
+    public StringResources(Context context) {
         mContext = context;
     }
 

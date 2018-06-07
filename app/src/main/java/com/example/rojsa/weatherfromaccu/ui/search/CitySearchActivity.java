@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.rojsa.weatherfromaccu.R;
-import com.example.rojsa.weatherfromaccu.data.StringResourses;
+import com.example.rojsa.weatherfromaccu.data.StringResources;
 import com.example.rojsa.weatherfromaccu.WeatherApplication;
 import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 
@@ -36,7 +36,7 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
 
         mPresenter.bind(this);
         mPresenter = new CitySearchPresenter(WeatherApplication.get(this).getService()
-                , new StringResourses(this));
+                , new StringResources(this));
 
         btnOkSearchCity.setOnClickListener(this);
 
