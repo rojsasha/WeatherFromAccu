@@ -18,6 +18,8 @@ import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel
 import com.example.rojsa.weatherfromaccu.ui.base.BaseActivity;
 import com.example.rojsa.weatherfromaccu.ui.search.CitySearchActivity;
 
+import io.realm.Realm;
+
 public class MainActivity extends BaseActivity implements OnClickListener, MainContract.View {
     private TextView tvTemperature, tvCity, tvDate;
     private String mKeyCity, mCity;
@@ -28,11 +30,13 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         showProgressBar();
 
-
         mPresenter = new MainPresenter(WeatherApplication.get(this).getService(),
-                new StringResources(this),(LocationManager) getSystemService(LOCATION_SERVICE));
+                WeatherApplication.get(this).getRealm(),
+                new StringResources(this),
+                (LocationManager) getSystemService(LOCATION_SERVICE));
         mPresenter.bind(this);
 
         tvTemperature = findViewById(R.id.tvTemperature);
@@ -40,12 +44,10 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
         tvDate = findViewById(R.id.tvDate);
         listView = findViewById(R.id.listView);
 
-
         ImageButton btnSetCity = findViewById(R.id.btnSetCity);
 
         btnSetCity.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -78,8 +80,8 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
     }
 
     @Override
-    public void onSuccessLocationCurrentWeather(CurrentModel model) {
-
+    public void onSuccessLocationCurrentWeather(String city) {
+        tvCity.setText(city);
     }
 
     @Override

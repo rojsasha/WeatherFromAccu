@@ -16,7 +16,11 @@ import com.example.rojsa.weatherfromaccu.data.Constants;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.DailyForecast;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by rojsa on 13.04.2018.
@@ -31,7 +35,6 @@ public class ForeCastAdapter extends ArrayAdapter {
         this.list = list;
         this.context = context;
     }
-
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -54,9 +57,27 @@ public class ForeCastAdapter extends ArrayAdapter {
             url = String.format(Constants.URL_IMAGE_ONE, model.getDay().getIcon());
         }
 
+
         Picasso.get().load(url).into(holder.imageView);
+        holder.tvDate.setText(formatData(String.valueOf(model.getDay())));
         holder.tvTemp.setText(model.getTemperature().getMaximum().getValue() + "/" + model.getTemperature().getMinimum().getValue());
         return convertView;
+    }
+    private String formatData(String data) {
+        String inputPattern = "yyyy-MM-dd HH:mm:ss";
+        String outputPattern = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.getDefault());
+        Date date;
+        String str = null;
+        try {
+            date = inputFormat.parse(data);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+
     }
 
     class ViewHolder {

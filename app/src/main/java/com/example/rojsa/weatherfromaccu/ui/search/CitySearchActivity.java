@@ -34,9 +34,10 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         btnOkSearchCity = findViewById(R.id.btnOkSearchCity);
         listViewCity = findViewById(R.id.listViewCity);
 
-        mPresenter.bind(this);
+
         mPresenter = new CitySearchPresenter(WeatherApplication.get(this).getService()
                 , new StringResources(this));
+        mPresenter.bind(this);
 
         btnOkSearchCity.setOnClickListener(this);
 

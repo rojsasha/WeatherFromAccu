@@ -1,21 +1,18 @@
 package com.example.rojsa.weatherfromaccu.ui.main;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.PermissionUtils;
 import com.example.rojsa.weatherfromaccu.data.StringResources;
+import com.example.rojsa.weatherfromaccu.data.db.SaveMainCity;
 import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
 import com.example.rojsa.weatherfromaccu.models.CurrentModel;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel;
@@ -24,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,24 +31,53 @@ public class MainPresenter implements MainContract.Presenter {
     private MainContract.View mView;
     private WeatherInterface mService;
     private StringResources mGetString;
-    private LatLng currentLocation;
     private LocationManager mLocationManager;
     private Location location;
     private boolean flag = true;
+    private Realm mRealm;
 
 
-    public MainPresenter(WeatherInterface service, StringResources getString, LocationManager manager) {
+    public MainPresenter(WeatherInterface service,Realm realm, StringResources getString, LocationManager manager) {
         mService = service;
         mGetString = getString;
         mLocationManager = manager;
+        mRealm = realm;
+    }
+
+
+    private void saveCity(String idCity, String nameCity, String location) {
+
+        mRealm.beginTransaction();
+        if (mRealm.where(SaveMainCity.class).findFirst() == null) {
+            SaveMainCity mainCity = mRealm.createObject(SaveMainCity.class);
+            mainCity.setIdCity(idCity);
+            mainCity.setNameCity(nameCity);
+            mainCity.setLocation(location);
+
+        } else {
+            SaveMainCity mainCity = mRealm.where(SaveMainCity.class).findFirst();
+            mainCity.setIdCity(idCity);
+            mainCity.setNameCity(nameCity);
+            mainCity.setLocation(location);
+        }
+        mRealm.commitTransaction();
+    }
+
+    private void getSavedCoordinateComparison(String location) {
+        SaveMainCity mainCity = mRealm.where(SaveMainCity.class).findFirst();
+        if (mainCity != null) {
+            flag = false;
+            mView.onSuccessLocationCurrentWeather(mainCity.getNameCity());
+            getWeatherCurrent(mainCity.getIdCity());
+            getWeatherForecast(mainCity.getIdCity());
+            Log.d("getsavedcity", "getSavedCoordinateComparison: ");
+        } else {
+            getLocationCurrentWeather(location);
+        }
     }
 
     @Override
     public void getWeatherCurrent(String keyCity) {
-        if (keyCity != null) {
-
-        }
-
         mService.getCurrentWeather(keyCity, mGetString.getString(R.string.api_key1))
                 .enqueue(new Callback<List<CurrentModel>>() {
                     @Override
@@ -98,17 +125,20 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void getLocationCurrentWeather(final String location) {
-        Log.d("locat", "getLocationCurrentWeather: " + location );
-        if (location != null) flag = false;
-        mService.getGeoKeyCity(mGetString.getString(R.string.api_key),
+        Log.d("locat", "getLocationCurrentWeather: " + location);
+        mService.getGeoKeyCity(mGetString.getString(R.string.api_key2),
                 location
                 , "ru-RU")
                 .enqueue(new Callback<GeoPosModel>() {
                     @Override
                     public void onResponse(@NonNull Call<GeoPosModel> call, @NonNull Response<GeoPosModel> response) {
-                        if (response.isSuccessful() && response.body() != null){
+                        if (response.isSuccessful() && response.body() != null) {
+                            saveCity(response.body().getKey(),
+                                    response.body().getLocalizedName(),
+                                    location);
                             getWeatherCurrent(response.body().getKey());
                             getWeatherForecast(response.body().getKey());
+                            mView.onSuccessLocationCurrentWeather(response.body().getLocalizedName());
                             Log.d("locat", "getLocat: in onresponse" + response.body().getKey());
                         }
                     }
@@ -118,9 +148,6 @@ public class MainPresenter implements MainContract.Presenter {
 
                     }
                 });
-
-
-
     }
 
     @Override
@@ -137,15 +164,14 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     public void getLocation(Location lastKnownLocation) {
-        if (flag){
-            if (PermissionUtils.checkLocationPermission((Activity) mView)){
+        if (flag) {
+            if (PermissionUtils.checkLocationPermission((Activity) mView)) {
                 mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                         1000 * 10, 10, locationListener);
                 Log.d("location", "getLocation: permission ");
                 getFormatLocation(lastKnownLocation);
             }
         }
-
 
 
     }
@@ -182,10 +208,13 @@ public class MainPresenter implements MainContract.Presenter {
         if (location == null) {
             return;
         }
-        getLocationCurrentWeather(String.format("%1$.4f",
+
+        String formattedLocation = String.format("%1$.4f",
                 location.getLatitude()).replace(",", ".")
                 + ","
                 + String.format("%1$.4f",
-                location.getLongitude()).replace(",", "."));
+                location.getLongitude()).replace(",", ".");
+        getSavedCoordinateComparison(formattedLocation);
     }
+
 }
