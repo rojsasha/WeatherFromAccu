@@ -15,7 +15,6 @@ public interface CitySearchContract {
 
     interface Presenter extends LiveCicle<View> {
         void getCityList(String city);
-        void saveCity(String id, String city);
     }
 }
 

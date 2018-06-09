@@ -20,14 +20,13 @@ import retrofit2.http.Query;
 public interface WeatherInterface {
     @GET("currentconditions/v1/{name}")
     Call<List<CurrentModel>> getCurrentWeather(@Path("name") String name,
-                                               @Query("apikey") String apiKey
-    );
+                                               @Query("apikey") String apiKey,
+                                               @Query("language") String lang);
 
     @GET(Constants.URL_CITY_SEARCH_GEOPOSITION)
     Call<GeoPosModel> getGeoKeyCity(@Query("apikey") String apiKey,
                                           @Query("q") String q,
-                                          @Query("language") String lang
-    );
+                                          @Query("language") String lang);
 
 //    @Query("language") String lang
 

@@ -6,7 +6,7 @@ import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel
 
 public interface MainContract {
     interface View {
-        void onSuccessCurrentWeather(CurrentModel model);
+        void onSuccessCurrentWeather(String temp, String weatherText);
         void onSuccessLocationCurrentWeather(String city);
 
         void onSuccessForecastWeather(ForecastModel mode);

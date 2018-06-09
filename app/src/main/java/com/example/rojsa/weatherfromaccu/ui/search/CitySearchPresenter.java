@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.StringResources;
-import com.example.rojsa.weatherfromaccu.data.db.SaveCityModel;
+import com.example.rojsa.weatherfromaccu.data.db.SaveWeatherCurrent;
 import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
 import com.example.rojsa.weatherfromaccu.models.city_search.CitySearchModel;
 
@@ -50,17 +50,6 @@ public class CitySearchPresenter implements CitySearchContract.Presenter {
             }
         });
     }
-
-    @Override
-    public void saveCity(String id, String city) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        SaveCityModel model = realm.createObject(SaveCityModel.class);
-        model.setIdCity(id);
-        model.setCityName(city);
-        realm.commitTransaction();
-    }
-
     @Override
     public void bind(CitySearchContract.View view) {
         mView = view;

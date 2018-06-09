@@ -12,16 +12,24 @@ import android.util.Log;
 import com.example.rojsa.weatherfromaccu.R;
 import com.example.rojsa.weatherfromaccu.data.PermissionUtils;
 import com.example.rojsa.weatherfromaccu.data.StringResources;
+import com.example.rojsa.weatherfromaccu.data.db.SaveForecastData;
 import com.example.rojsa.weatherfromaccu.data.db.SaveMainCity;
+import com.example.rojsa.weatherfromaccu.data.db.SaveWeatherCurrent;
 import com.example.rojsa.weatherfromaccu.data.internet.WeatherInterface;
 import com.example.rojsa.weatherfromaccu.models.CurrentModel;
 import com.example.rojsa.weatherfromaccu.models.forecats_five_days.ForecastModel;
 import com.example.rojsa.weatherfromaccu.models.geo_pos_model.GeoPosModel;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,9 +43,11 @@ public class MainPresenter implements MainContract.Presenter {
     private Location location;
     private boolean flag = true;
     private Realm mRealm;
+    private String mKeyCity;
 
+//
 
-    public MainPresenter(WeatherInterface service,Realm realm, StringResources getString, LocationManager manager) {
+    public MainPresenter(WeatherInterface service, Realm realm, StringResources getString, LocationManager manager) {
         mService = service;
         mGetString = getString;
         mLocationManager = manager;
@@ -46,7 +56,6 @@ public class MainPresenter implements MainContract.Presenter {
 
 
     private void saveCity(String idCity, String nameCity, String location) {
-
         mRealm.beginTransaction();
         if (mRealm.where(SaveMainCity.class).findFirst() == null) {
             SaveMainCity mainCity = mRealm.createObject(SaveMainCity.class);
@@ -64,6 +73,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     private void getSavedCoordinateComparison(String location) {
+        checkForecastWeather();
         SaveMainCity mainCity = mRealm.where(SaveMainCity.class).findFirst();
         if (mainCity != null) {
             flag = false;
@@ -75,15 +85,75 @@ public class MainPresenter implements MainContract.Presenter {
             getLocationCurrentWeather(location);
         }
     }
+    private void checkForecastWeather(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd",Locale.getDefault());
+        String date = sdf.format(new Date(System.currentTimeMillis()));
+
+        RealmList<SaveForecastData> savePath = new RealmList<>();
+        for (int i = 0; i < 5; i++) {
+            mRealm.beginTransaction();
+            SaveForecastData saveForecastData = mRealm.createObject(SaveForecastData.class);
+            saveForecastData.setDate("asasas" + i);
+            saveForecastData.setTemperature("asasas");
+            savePath.add(saveForecastData);
+            mRealm.commitTransaction();
+            Log.d("save", "checkForecastWeather: forecast");
+        }
+        RealmResults<SaveForecastData> savedList = mRealm.where(SaveForecastData.class).findAll();
+        for (int i = 0; i <savedList.size() ; i++) {
+            mView.onError(savedList.get(i).getDate() + i);
+        }
+    }
+
+    private void checkCurrentWeather(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH",Locale.getDefault());
+        String date = sdf.format(new Date(System.currentTimeMillis()));
+
+        SaveWeatherCurrent saveWeatherCurrent = mRealm.where(SaveWeatherCurrent.class).findFirst();
+        if (saveWeatherCurrent == null ){
+            getWeatherCurrent(mKeyCity);
+        }else if (saveWeatherCurrent.getTimeCurrent().equals(date)){
+            mView.onSuccessCurrentWeather(saveWeatherCurrent.getTemperature(),
+                    saveWeatherCurrent.getTextWeather());
+            Log.d("getSaved", "checkCurrentWeather: " + date);
+        } else {
+            getWeatherCurrent(mKeyCity);
+        }
+    }
+
+    private void saveCurrentWeather(String temp, String weatherText) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH", Locale.getDefault());
+        String date = sdf.format(new Date(System.currentTimeMillis()));
+        SaveWeatherCurrent model = mRealm.where(SaveWeatherCurrent.class).findFirst();
+        mRealm.beginTransaction();
+        if (model == null) {
+            Log.d("save", "saveCurrentWeather: save city");
+            SaveWeatherCurrent saveWeatherCurrent = mRealm.createObject(SaveWeatherCurrent.class);
+            saveWeatherCurrent.setTemperature(temp);
+            saveWeatherCurrent.setTextWeather(weatherText);
+            saveWeatherCurrent.setTimeCurrent(date);
+        } else {
+            Log.d("save", "saveCurrentWeather: update city");
+            SaveWeatherCurrent saveWeatherCurrent = mRealm.where(SaveWeatherCurrent.class).findFirst();
+            saveWeatherCurrent.setTemperature(temp);
+            saveWeatherCurrent.setTextWeather(weatherText);
+            saveWeatherCurrent.setTimeCurrent(date);
+        }
+        mRealm.commitTransaction();
+    }
 
     @Override
     public void getWeatherCurrent(String keyCity) {
-        mService.getCurrentWeather(keyCity, mGetString.getString(R.string.api_key1))
+        mService.getCurrentWeather(keyCity, mGetString.getString(R.string.api_key1), "ru-RU")
                 .enqueue(new Callback<List<CurrentModel>>() {
                     @Override
                     public void onResponse(@NonNull Call<List<CurrentModel>> call, @NonNull Response<List<CurrentModel>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            mView.onSuccessCurrentWeather(response.body().get(0));
+                            mView.onSuccessCurrentWeather(response.body().get(0).getTemperature().getMetric().getValue().toString(),
+                                    response.body().get(0).getWeatherText());
+
+                            saveCurrentWeather(response.body().get(0).getTemperature().getMetric().getValue().toString(),
+                                    response.body().get(0).getWeatherText());
                         } else {
                             mView.onError(response.message());
                         }
@@ -107,6 +177,7 @@ public class MainPresenter implements MainContract.Presenter {
                         public void onResponse(@NonNull Call<ForecastModel> call, @NonNull Response<ForecastModel> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 mView.onSuccessForecastWeather(response.body());
+
                             } else {
                                 mView.onError(response.message());
                             }
@@ -133,10 +204,10 @@ public class MainPresenter implements MainContract.Presenter {
                     @Override
                     public void onResponse(@NonNull Call<GeoPosModel> call, @NonNull Response<GeoPosModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            saveCity(response.body().getKey(),
+                            saveCity(mKeyCity = response.body().getKey(),
                                     response.body().getLocalizedName(),
                                     location);
-                            getWeatherCurrent(response.body().getKey());
+                            checkCurrentWeather();
                             getWeatherForecast(response.body().getKey());
                             mView.onSuccessLocationCurrentWeather(response.body().getLocalizedName());
                             Log.d("locat", "getLocat: in onresponse" + response.body().getKey());
@@ -162,6 +233,9 @@ public class MainPresenter implements MainContract.Presenter {
     public void unbind() {
         mView = null;
     }
+
+
+    //Methods to get location
 
     public void getLocation(Location lastKnownLocation) {
         if (flag) {

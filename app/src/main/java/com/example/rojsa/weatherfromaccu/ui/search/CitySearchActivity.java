@@ -54,7 +54,6 @@ public class CitySearchActivity extends AppCompatActivity implements View.OnClic
         Intent intent = new Intent();
         intent.putExtra("id", saveList.get(i).getKey());
         intent.putExtra("city", saveList.get(i).getLocalizedName());
-        mPresenter.saveCity(saveList.get(i).getKey(), saveList.get(i).getLocalizedName());
         setResult(RESULT_OK, intent);
         finish();
 

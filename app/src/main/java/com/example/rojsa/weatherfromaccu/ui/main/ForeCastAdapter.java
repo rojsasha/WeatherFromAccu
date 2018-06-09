@@ -59,13 +59,25 @@ public class ForeCastAdapter extends ArrayAdapter {
 
 
         Picasso.get().load(url).into(holder.imageView);
-        holder.tvDate.setText(formatData(String.valueOf(model.getDay())));
+        switch (position) {
+            case 0:
+                holder.tvDate.setText("Сегодня");
+                break;
+            case 1:
+                holder.tvDate.setText("Завтра");
+                break;
+            default:
+                holder.tvDate.setText(formatData(model.getDate()));
+                break;
+        }
+
         holder.tvTemp.setText(model.getTemperature().getMaximum().getValue() + "/" + model.getTemperature().getMinimum().getValue());
         return convertView;
     }
+
     private String formatData(String data) {
-        String inputPattern = "yyyy-MM-dd HH:mm:ss";
-        String outputPattern = "yyyy-MM-dd HH:mm:ss";
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ssZ";
+        String outputPattern = "EEE";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.getDefault());
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.getDefault());
         Date date;

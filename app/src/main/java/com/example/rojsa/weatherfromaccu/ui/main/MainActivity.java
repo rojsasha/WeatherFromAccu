@@ -21,10 +21,10 @@ import com.example.rojsa.weatherfromaccu.ui.search.CitySearchActivity;
 import io.realm.Realm;
 
 public class MainActivity extends BaseActivity implements OnClickListener, MainContract.View {
-    private TextView tvTemperature, tvCity, tvDate;
+    private TextView tvTemperature, tvCity, tvTextWeather;
     private String mKeyCity, mCity;
     private ListView listView;
-    private MainPresenter mPresenter;
+    private MainContract.Presenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
 
         tvTemperature = findViewById(R.id.tvTemperature);
         tvCity = findViewById(R.id.tvCity);
-        tvDate = findViewById(R.id.tvDate);
+        tvTextWeather = findViewById(R.id.tvTextWeather);
         listView = findViewById(R.id.listView);
 
         ImageButton btnSetCity = findViewById(R.id.btnSetCity);
@@ -74,8 +74,9 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
     }
 
     @Override
-    public void onSuccessCurrentWeather(CurrentModel model) {
-        tvTemperature.setText(String.valueOf(model.getTemperature().getMetric().getValue()));
+    public void onSuccessCurrentWeather(String temp, String weathetText) {
+        tvTemperature.setText(String.valueOf(temp));
+        tvTextWeather.setText(weathetText);
         dismissProgressBar();
     }
 
@@ -86,7 +87,6 @@ public class MainActivity extends BaseActivity implements OnClickListener, MainC
 
     @Override
     public void onSuccessForecastWeather(ForecastModel model) {
-        tvTemperature.setText(String.valueOf(model.getDailyForecasts().get(0).getTemperature().getMaximum().getValue()));
         listView.setAdapter(new ForeCastAdapter(this, model.getDailyForecasts()));
         dismissProgressBar();
     }
